@@ -7,11 +7,11 @@ let factTimer = 0;
 let factActive = false;
 
 const swedenFacts = [
-  "🇸🇪 Schweden hat 7x Eurovision gewonnen!",
-  "🐻 300.000 Elche leben in Schweden",
-  "🏅 39 Nobelpreisträger aus Schweden",
-  "⚽ Vize-Weltmeister 1958",
-  "👑 250.000 Jäger in Schweden"
+  "Schweden hat 7x Eurovision gewonnen!",
+  " 300.000 Elche leben in Schweden",
+  "39 Nobelpreisträger aus Schweden",
+  "Fußball Vize-Weltmeister 1958",
+  "250.000 Jäger in Schweden"
 ];
 
 const player = {

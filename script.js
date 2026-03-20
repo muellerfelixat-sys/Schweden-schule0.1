@@ -1,74 +1,35 @@
-// Canvas holen
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// Punktezähler
 let score = 0;
+let funFact = "";
+let factTimer = 0;
+let factActive = false;
 
-// Spieler-Objekt
-const player = {
-  x: 50,
-  y: 300,
-  width: 40,
-  height: 40,
-  color: "#005BAE", // Schwedisches Flaggenblau
-  vx: 0,
-  vy: 0,
-  speed: 2,
-  jumpPower: -12,
-  onGround: false
-};
-
-// Boden
-const groundY = 350;
-
-// Münze (schwedische Krone)
-const coin = {
-  x: 0,
-  y: 0,
-  width: 25,
-  height: 25,
-  collected: false,
-  spawnTimer: 0
-};
-
-// Plattformen
-let platforms = [
-  {
-    x: 100,
-    y: 280,
-    width: 120,
-    height: 20,
-    vx: 1,
-    rangeLeft: 80,
-    rangeRight: 300
-  },
-  {
-    x: 400,
-    y: 230,
-    width: 120,
-    height: 20,
-    vx: -1,
-    rangeLeft: 350,
-    rangeRight: 650
-  },
-  {
-    x: 200,
-    y: 180,
-    width: 100,
-    height: 20,
-    vx: 1,
-    rangeLeft: 150,
-    rangeRight: 500
-  }
+const swedenFacts = [
+  "🇸🇪 Schweden hat 7x Eurovision gewonnen!",
+  "🐻 300.000 Elche leben in Schweden",
+  "🏅 39 Nobelpreisträger aus Schweden",
+  "⚽ Vize-Weltmeister 1958",
+  "👑 250.000 Jäger in Schweden"
 ];
 
-// Tastatur
-const keys = {
-  left: false,
-  right: false,
-  up: false
+const player = {
+  x: 50, y: 300, width: 40, height: 40,
+  color: "#005BAE", vx: 0, vy: 0,
+  speed: 2, jumpPower: -12, onGround: false
 };
+
+const groundY = 350;
+const coin = { x: 0, y: 0, width: 25, height: 25, collected: false, spawnTimer: 0 };
+
+let platforms = [
+  { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
+  { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
+  { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 }
+];
+
+const keys = { left: false, right: false, up: false };
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "ArrowLeft") keys.left = true;
@@ -82,39 +43,12 @@ document.addEventListener("keyup", (e) => {
   if (e.code === "Space" || e.code === "ArrowUp") keys.up = false;
 });
 
-// Schwedischer Himmel-Hintergrund
-function drawBackground() {
-  // Schwedischer blauer Himmel (Flaggenfarbe)
-  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  gradient.addColorStop(0, "#87CEEB");    // Helles Himmelblau
-  gradient.addColorStop(0.5, "#4682B4");  // Mittleres Himmelblau
-  gradient.addColorStop(1, "#1E3A8A");    // Dunkles Flaggenblau
-  
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-  // Schwedische Kiefern-Silhouette (schwarze Dreiecke)
-  ctx.fillStyle = "#1a3c34";
-  ctx.beginPath();
-  ctx.moveTo(100, 370);
-  ctx.lineTo(130, 340);
-  ctx.lineTo(160, 370);
-  ctx.fill();
-  
-  ctx.beginPath();
-  ctx.moveTo(500, 365);
-  ctx.lineTo(530, 335);
-  ctx.lineTo(560, 365);
-  ctx.fill();
-  
-  ctx.beginPath();
-  ctx.moveTo(700, 375);
-  ctx.lineTo(725, 345);
-  ctx.lineTo(750, 375);
-  ctx.fill();
+function showRandomFact() {
+  funFact = swedenFacts[Math.floor(Math.random() * swedenFacts.length)];
+  factActive = true;
+  factTimer = 180;
 }
 
-// Münze zufällig spawnen
 function spawnCoin() {
   coin.x = Math.random() * (canvas.width - coin.width - 50) + 25;
   coin.y = Math.random() * 200 + 50;
@@ -122,7 +56,6 @@ function spawnCoin() {
   coin.spawnTimer = 0;
 }
 
-// Plattformen zufällig repositionieren
 function shufflePlatforms() {
   platforms.forEach(p => {
     p.x = Math.random() * (canvas.width - p.width - 100) + 50;
@@ -133,26 +66,29 @@ function shufflePlatforms() {
   });
 }
 
-// Update-Funktion
+function drawBackground() {
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, "#87CEEB");
+  gradient.addColorStop(0.5, "#4682B4");
+  gradient.addColorStop(1, "#1E3A8A");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 function update() {
   platforms.forEach(p => {
     p.x += p.vx;
-    if (p.x < p.rangeLeft || p.x + p.width > p.rangeRight) {
-      p.vx *= -1;
-    }
+    if (p.x < p.rangeLeft || p.x + p.width > p.rangeRight) p.vx *= -1;
   });
 
   if (coin.collected) {
     coin.spawnTimer++;
-    if (coin.spawnTimer > 120) {
-      spawnCoin();
-    }
+    if (coin.spawnTimer > 120) spawnCoin();
   }
 
   player.vx = 0;
   if (keys.left) player.vx = -player.speed;
   if (keys.right) player.vx = player.speed;
-
   if (keys.up && player.onGround) {
     player.vy = player.jumpPower;
     player.onGround = false;
@@ -161,7 +97,6 @@ function update() {
   player.vy += 0.5;
   player.x += player.vx;
   player.y += player.vy;
-
   player.onGround = false;
 
   if (player.y + player.height >= groundY) {
@@ -173,11 +108,11 @@ function update() {
   platforms.forEach(p => {
     const playerBottom = player.y + player.height;
     const playerOldBottom = playerBottom - player.vy;
-    const isAbovePlatformBefore = playerOldBottom <= p.y;
+    const isAbove = playerOldBottom <= p.y;
     const isFalling = player.vy >= 0;
     const withinX = player.x + player.width > p.x && player.x < p.x + p.width;
 
-    if (isAbovePlatformBefore && isFalling && withinX && 
+    if (isAbove && isFalling && withinX && 
         playerBottom >= p.y && playerBottom <= p.y + p.height) {
       player.y = p.y - player.height;
       player.vy = 0;
@@ -194,29 +129,25 @@ function update() {
     score += 10;
     coin.collected = true;
     shufflePlatforms();
+    showRandomFact();
   }
 
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+  if (factActive) {
+    factTimer--;
+    if (factTimer <= 0) factActive = false;
+  }
 }
 
-// Zeichnen (OBEN RECHTS Fun Fact!)
 function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
 
-  // Schnee-Boden
   ctx.fillStyle = "#E8F4FD";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
-  
-  // Schneepunkte
-  ctx.fillStyle = "rgba(255,255,255,0.6)";
-  for(let i = 0; i < 30; i++) {
-    ctx.beginPath();
-    ctx.arc(Math.random()*canvas.width, Math.random()*200 + groundY, 2, 0, Math.PI*2);
-    ctx.fill();
-  }
 
-  // Holzzäune-Plattformen
   ctx.fillStyle = "#D2B48C";
   platforms.forEach(p => {
     ctx.fillRect(p.x, p.y, p.width, p.height);
@@ -228,7 +159,6 @@ function draw() {
     ctx.stroke();
   });
 
-  // Schwedische Krone
   if (!coin.collected) {
     ctx.fillStyle = "#FFD700";
     ctx.beginPath();
@@ -242,43 +172,39 @@ function draw() {
     ctx.stroke();
   }
 
-  // Flaggen-Spieler
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
   ctx.fillStyle = "#FFC301";
   ctx.fillRect(player.x + 8, player.y + 4, 6, 16);
   ctx.fillRect(player.x + 2, player.y + 10, 18, 4);
 
-  // ═══════════════════════════════════════════════════════
-  // PUNKTEZÄHLER LINKS + FUN FACT RECHTS (NEU!)
-  // ═══════════════════════════════════════════════════════
-  
-  // Hintergrund für Punkte & Fact (schwedische Flaggenfarben)
-  ctx.fillStyle = "rgba(0, 91, 174, 0.9)"; // Flaggenblau
-  ctx.fillRect(10, 5, 780, 80);
-  
-  // Punktezähler (links)
-  ctx.fillStyle = "#FFC301"; // FlaggenGelb
+  // UI: Punkte + Fun Fact (OBEN RECHTS)
+  ctx.fillStyle = "rgba(0, 91, 174, 0.9)";
+  ctx.fillRect(10, 5, canvas.width - 20, 70);
+
+  ctx.fillStyle = "#FFC301";
   ctx.font = "bold 24px Arial";
   ctx.textAlign = "left";
   ctx.fillText("Punkte: " + score, 25, 30);
-  
-  // Aktueller Punktestand (groß)
+
   ctx.font = "bold 32px Arial";
   ctx.fillText(score, 25, 55);
 
-  // FUN FACT OBEN RECHTS! (neben Punktezähler)
   if (factActive) {
-    ctx.fillStyle = "#FFFFFF"; // Weißer Text
-    ctx.font = "bold 18px Arial";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 16px Arial";
     ctx.textAlign = "right";
     ctx.fillText(funFact, canvas.width - 25, 35);
   }
-  
-  ctx.textAlign = "left"; // Zurücksetzen
+
+  ctx.textAlign = "left";
 }
 
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
 
-// Start
 spawnCoin();
 gameLoop();

@@ -200,15 +200,15 @@ function update() {
   if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
 }
 
-// Schwedisches Zeichnen
+// Zeichnen (OBEN RECHTS Fun Fact!)
 function draw() {
-  drawBackground(); // Schwedischer Himmel + Kiefern
+  drawBackground();
 
-  // Schwedischer Schnee-Boden
+  // Schnee-Boden
   ctx.fillStyle = "#E8F4FD";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
   
-  // Schnee-Effekt (weiße Punkte)
+  // Schneepunkte
   ctx.fillStyle = "rgba(255,255,255,0.6)";
   for(let i = 0; i < 30; i++) {
     ctx.beginPath();
@@ -216,12 +216,10 @@ function draw() {
     ctx.fill();
   }
 
-  // Schwedische Holzzäune als Plattformen
-  ctx.fillStyle = "#D2B48C"; // Holzfarbe
+  // Holzzäune-Plattformen
+  ctx.fillStyle = "#D2B48C";
   platforms.forEach(p => {
     ctx.fillRect(p.x, p.y, p.width, p.height);
-    
-    // Holzzäune-Linien
     ctx.strokeStyle = "#8B4513";
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -230,51 +228,56 @@ function draw() {
     ctx.stroke();
   });
 
-  // Schwedische Krone (Münze mit Flaggenkreuz)
+  // Schwedische Krone
   if (!coin.collected) {
-    // Goldene Krone
     ctx.fillStyle = "#FFD700";
     ctx.beginPath();
     ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2, coin.width/2, 0, Math.PI * 2);
     ctx.fill();
-    
-    // Schwedisches Flaggenkreuz drauf
     ctx.fillStyle = "#005BAE";
     ctx.fillRect(coin.x + 8, coin.y + 6, 10, 14);
     ctx.fillRect(coin.x + 4, coin.y + 11, 18, 4);
-    
-    // Goldener Rand
     ctx.strokeStyle = "#FFA500";
     ctx.lineWidth = 2;
     ctx.stroke();
   }
 
-  // Spieler (schwedische Flagge-Figur)
-  ctx.fillStyle = player.color; // Flaggenblau
+  // Flaggen-Spieler
+  ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
-  
-  // Gelbes Flaggenkreuz auf Spieler
   ctx.fillStyle = "#FFC301";
   ctx.fillRect(player.x + 8, player.y + 4, 6, 16);
   ctx.fillRect(player.x + 2, player.y + 10, 18, 4);
 
-  // Punktezähler (schwedische Flaggenfarben)
-  ctx.fillStyle = "#005BAE";
+  // ═══════════════════════════════════════════════════════
+  // PUNKTEZÄHLER LINKS + FUN FACT RECHTS (NEU!)
+  // ═══════════════════════════════════════════════════════
+  
+  // Hintergrund für Punkte & Fact (schwedische Flaggenfarben)
+  ctx.fillStyle = "rgba(0, 91, 174, 0.9)"; // Flaggenblau
+  ctx.fillRect(10, 5, 780, 80);
+  
+  // Punktezähler (links)
+  ctx.fillStyle = "#FFC301"; // FlaggenGelb
   ctx.font = "bold 24px Arial";
   ctx.textAlign = "left";
-  ctx.fillText("Punkte: " + score, 20, 35);
+  ctx.fillText("Punkte: " + score, 25, 30);
   
-  ctx.fillStyle = "#FFC301";
-  ctx.font = "bold 26px Arial";
-  ctx.fillText(score, 120, 36);
+  // Aktueller Punktestand (groß)
+  ctx.font = "bold 32px Arial";
+  ctx.fillText(score, 25, 55);
+
+  // FUN FACT OBEN RECHTS! (neben Punktezähler)
+  if (factActive) {
+    ctx.fillStyle = "#FFFFFF"; // Weißer Text
+    ctx.font = "bold 18px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText(funFact, canvas.width - 25, 35);
+  }
+  
+  ctx.textAlign = "left"; // Zurücksetzen
 }
 
-// Game-Loop
-function gameLoop() {
-  update();
-  draw();
-  requestAnimationFrame(gameLoop);
-}
 
 // Start
 spawnCoin();

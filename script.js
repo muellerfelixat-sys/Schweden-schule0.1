@@ -4,6 +4,7 @@ const ctx = canvas.getContext("2d");
 
 // Spieler-Objekt
 const player = {
+  speed: 2
   x: 50,
   y: 300,
   width: 40,

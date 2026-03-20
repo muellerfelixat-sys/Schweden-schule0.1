@@ -16,7 +16,7 @@ const player = {
   vx: 0,
   vy: 0,
   speed: 4,
-  jumpPower: 10,
+  jumpPower: -20,
   onGround: false
 };
 

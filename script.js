@@ -26,7 +26,7 @@ const platforms = [
     y: 280,
     width: 120,
     height: 20,
-    vx: 2, // Bewegungsgeschwindigkeit nach rechts
+    vx: 1, // Bewegungsgeschwindigkeit nach rechts
     rangeLeft: 80,
     rangeRight: 300
   },
@@ -35,7 +35,7 @@ const platforms = [
     y: 230,
     width: 120,
     height: 20,
-    vx: -2,
+    vx: -1,
     rangeLeft: 350,
     rangeRight: 650
   },
@@ -44,7 +44,7 @@ const platforms = [
     y: 180,
     width: 100,
     height: 20,
-    vx: 1.5,
+    vx: 1,
     rangeLeft: 150,
     rangeRight: 500
   }

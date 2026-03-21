@@ -5,7 +5,12 @@ let score = 0;
 let funFact = "";
 let factTimer = 0;
 let factActive = false;
-let flightMode = false; // ← FLUGMODUS NEU!
+let flightMode = false; // FLUGMODUS AKTIV!
+
+let touchLeft = false;
+let touchRight = false;
+let touchUp = false;
+let touchDown = false;
 
 const swedenFacts = [
   "🇸🇪 Schweden hat 7x Eurovision gewonnen!",
@@ -28,19 +33,29 @@ let platforms = [
   { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
   { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
   { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 },
-  { x: 300, y: 150, witdh: 100, height: 20, vx: 1, rangeleft: 130, rangeright: 400 },
+  { x: 300, y: 150, width: 100, height: 20, vx: 1, rangeleft: 130, rangeRight: 400 },
+
 ];
+
+// TOUCH-BEREICHE (links unten = Links, rechts unten = Rechts, etc.)
+const touchZones = {
+  left: { x: 0, y: canvas.height - 150, w: 100, h: 150 },
+  right: { x: canvas.width - 100, y: canvas.height - 150, w: 100, h: 150 },
+  up: { x: canvas.width/2 - 50, y: canvas.height - 300, w: 100, h: 100 },
+  down: { x: canvas.width/2 - 50, y: canvas.height - 150, w: 100, h: 100 }
+};
 
 const keys = { left: false, right: false, up: false, down: false, zero: false };
 
+// KEYBOARD STEUERUNG
 document.addEventListener("keydown", (e) => {
   if (e.code === "ArrowLeft") keys.left = true;
   if (e.code === "ArrowRight") keys.right = true;
   if (e.code === "ArrowUp") keys.up = true;
   if (e.code === "ArrowDown") keys.down = true;
-  if (e.code === "Digit0") { // ← TASTE 0 für Flugmodus!
+  if (e.code === "Digit0") {
     flightMode = !flightMode;
-    player.vy = 0; // Vertikale Geschwindigkeit zurücksetzen
+    player.vy = 0;
   }
 });
 
@@ -49,6 +64,33 @@ document.addEventListener("keyup", (e) => {
   if (e.code === "ArrowRight") keys.right = false;
   if (e.code === "ArrowUp") keys.up = false;
   if (e.code === "ArrowDown") keys.down = false;
+});
+
+// MOBILE TOUCH STEUERUNG
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  const touch = e.touches[0];
+  const rect = canvas.getBoundingClientRect();
+  const x = touch.clientX - rect.left;
+  const y = touch.clientY - rect.top;
+  
+  // Touch-Bereiche prüfen
+  if (x < 100 && y > canvas.height - 150) touchLeft = true;
+  if (x > canvas.width - 100 && y > canvas.height - 150) touchRight = true;
+  if (x > canvas.width/2 - 50 && x < canvas.width/2 + 50 && y > canvas.height - 300 && y < canvas.height - 200) touchUp = true;
+  if (x > canvas.width/2 - 50 && x < canvas.width/2 + 50 && y > canvas.height - 150) touchDown = true;
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+});
+
+canvas.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  touchLeft = false;
+  touchRight = false;
+  touchUp = false;
+  touchDown = false;
 });
 
 function showRandomFact() {
@@ -94,28 +136,30 @@ function update() {
     if (coin.spawnTimer > 120) spawnCoin();
   }
 
-  // ← FLUGMODUS LOGIK NEU!
+  // Eingaben kombinieren (Tastatur + Touch)
+  const inputLeft = keys.left || touchLeft;
+  const inputRight = keys.right || touchRight;
+  const inputUp = keys.up || touchUp;
+  const inputDown = keys.down || touchDown;
+
   if (flightMode) {
-    // Flugmodus: Pfeiltasten = frei fliegen
+    // Flugmodus
     player.vx = 0;
     player.vy = 0;
-    if (keys.left) player.vx = -player.speed * 1.5;
-    if (keys.right) player.vx = player.speed * 1.5;
-    if (keys.up) player.vy = -player.speed * 1.5;
-    if (keys.down) player.vy = player.speed * 1.5;
-    
-    player.onGround = false; // Keine Gravitation im Flugmodus
+    if (inputLeft) player.vx = -player.speed * 1.5;
+    if (inputRight) player.vx = player.speed * 1.5;
+    if (inputUp) player.vy = -player.speed * 1.5;
+    if (inputDown) player.vy = player.speed * 1.5;
+    player.onGround = false;
   } else {
-    // Normalmodus: Laufen + Springen
+    // Normalmodus
     player.vx = 0;
-    if (keys.left) player.vx = -player.speed;
-    if (keys.right) player.vx = player.speed;
-    if (keys.up && player.onGround) {
+    if (inputLeft) player.vx = -player.speed;
+    if (inputRight) player.vx = player.speed;
+    if (inputUp && player.onGround) {
       player.vy = player.jumpPower;
       player.onGround = false;
     }
-    
-    // Schwerkraft nur im Normalmodus
     player.vy += 0.5;
   }
 
@@ -124,14 +168,12 @@ function update() {
   
   if (!flightMode) player.onGround = false;
 
-  // Boden-Kollision (nur Normalmodus)
   if (!flightMode && player.y + player.height >= groundY) {
     player.y = groundY - player.height;
     player.vy = 0;
     player.onGround = true;
   }
 
-  // Plattform-Kollision (nur Normalmodus)
   if (!flightMode) {
     platforms.forEach(p => {
       const playerBottom = player.y + player.height;
@@ -150,7 +192,6 @@ function update() {
     });
   }
 
-  // Münze einsammeln
   if (!coin.collected &&
       player.x < coin.x + coin.width &&
       player.x + player.width > coin.x &&
@@ -162,7 +203,6 @@ function update() {
     showRandomFact();
   }
 
-  // Bildschirmbegrenzung
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
   if (player.y < 0) player.y = 0;
@@ -178,11 +218,9 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
 
-  // Schnee-Boden
   ctx.fillStyle = "#E8F4FD";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
-  // Plattformen
   ctx.fillStyle = "#D2B48C";
   platforms.forEach(p => {
     ctx.fillRect(p.x, p.y, p.width, p.height);
@@ -194,7 +232,6 @@ function draw() {
     ctx.stroke();
   });
 
-  // Münze
   if (!coin.collected) {
     ctx.fillStyle = "#FFD700";
     ctx.beginPath();
@@ -208,14 +245,12 @@ function draw() {
     ctx.stroke();
   }
 
-  // Spieler (mit Flugmodus-Anzeige)
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
   ctx.fillStyle = "#FFC301";
   ctx.fillRect(player.x + 8, player.y + 4, 6, 16);
   ctx.fillRect(player.x + 2, player.y + 10, 18, 4);
-  
-  // FLUGMODUS-INDIKATOR (roter Stern oben links)
+
   if (flightMode) {
     ctx.fillStyle = "#FF0000";
     ctx.font = "bold 24px Arial";
@@ -223,7 +258,7 @@ function draw() {
     ctx.fillText("✈️ FLIEGEN!", 20, canvas.height - 30);
   }
 
-  // UI: Punkte + Fun Fact
+  // UI
   ctx.fillStyle = "rgba(0, 91, 174, 0.9)";
   ctx.fillRect(10, 5, canvas.width - 20, 70);
 
@@ -240,6 +275,13 @@ function draw() {
     ctx.textAlign = "right";
     ctx.fillText(funFact, canvas.width - 25, 35);
   }
+
+  // MOBILE TOUCH BUTTONS (sichtbar machen)
+  ctx.fillStyle = "rgba(255,255,255,0.2)";
+  ctx.fillRect(20, canvas.height - 140, 80, 120); // Links
+  ctx.fillRect(canvas.width - 100, canvas.height - 140, 80, 120); // Rechts
+  ctx.fillRect(canvas.width/2 - 60, canvas.height - 280, 120, 80); // Hoch
+  ctx.fillRect(canvas.width/2 - 60, canvas.height - 140, 120, 80); // Runter
 
   ctx.textAlign = "left";
 }

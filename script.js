@@ -26,8 +26,9 @@ const coin = { x: 0, y: 0, width: 25, height: 25, collected: false, spawnTimer: 
 let platforms = [
   { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
   { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
-  { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 }
-];
+  { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 },
+  { x: 300, y: 150, width: 100, height: 20  vx: 1, rangeleft: 100, rangeright: 200 }
+  ];
 
 const keys = { left: false, right: false, up: false };
 

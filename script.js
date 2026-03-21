@@ -39,11 +39,20 @@ let platforms = [
 
 // TOUCH-BEREICHE (links unten = Links, rechts unten = Rechts, etc.)
 const touchZones = {
-  left: { x: 0, y: canvas.height - 150, w: 100, h: 150 },
-  right: { x: canvas.width - 100, y: canvas.height - 150, w: 100, h: 150 },
+  left: { x: canvas.width - 180, y: canvas.height - 200, w: 80, h: 80 },
+  right: { x: canvas.width - 90,  y: canvas.height - 200, w: 80, h: 80 },
   up: { x: canvas.width/2 - 50, y: canvas.height - 300, w: 100, h: 100 },
   down: { x: canvas.width/2 - 50, y: canvas.height - 150, w: 100, h: 100 }
 };
+
+/*
+ ctx.fillRect(canvas.width - 180, canvas.height - 200, 80, 80);  // ←
+  ctx.fillRect(canvas.width - 90,  canvas.height - 200, 80, 80);  // →
+  
+  ctx.fillStyle = "rgba(255, 195, 1, 0.8)";
+  ctx.fillRect(canvas.width - 135, canvas.height - 110, 80, 80);  // ↑
+
+*/
 
 const keys = { left: false, right: false, up: false, down: false, zero: false };
 
@@ -80,7 +89,14 @@ canvas.addEventListener("touchstart", (e) => {
   if (x > canvas.width/2 - 50 && x < canvas.width/2 + 50 && y > canvas.height - 300 && y < canvas.height - 200) touchUp = true;
   if (x > canvas.width/2 - 50 && x < canvas.width/2 + 50 && y > canvas.height - 150) touchDown = true;
 });
+/*
+ ctx.fillRect(canvas.width - 180, canvas.height - 200, 80, 80);  // ←
+  ctx.fillRect(canvas.width - 90,  canvas.height - 200, 80, 80);  // →
+  
+  ctx.fillStyle = "rgba(255, 195, 1, 0.8)";
+  ctx.fillRect(canvas.width - 135, canvas.height - 110, 80, 80);  // ↑
 
+*/
 canvas.addEventListener("touchmove", (e) => {
   e.preventDefault();
 });
@@ -213,6 +229,9 @@ function update() {
     if (factTimer <= 0) factActive = false;
   }
 }
+
+
+
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -5,13 +5,14 @@ let score = 0;
 let funFact = "";
 let factTimer = 0;
 let factActive = false;
+let flightMode = false; // ← FLUGMODUS NEU!
 
 const swedenFacts = [
-  "Schweden hat 7x Eurovision gewonnen!",
-  " 300.000 Elche leben in Schweden",
-  "39 Nobelpreisträger aus Schweden",
-  "Fußball Vize-Weltmeister 1958",
-  "250.000 Jäger in Schweden"
+  "🇸🇪 Schweden hat 7x Eurovision gewonnen!",
+  "🐻 300.000 Elche leben in Schweden",
+  "🏅 39 Nobelpreisträger aus Schweden",
+  "⚽ Vize-Weltmeister 1958",
+  "👑 250.000 Jäger in Schweden"
 ];
 
 const player = {
@@ -27,21 +28,27 @@ let platforms = [
   { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
   { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
   { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 },
-  { x: 100, y: 150, width: 110, height: 20, vx: 1, rangeLeft: 130, rangeRight: 300 },
-  ];
+  { x: 300, y: 150, witdh: 100, height: 20, vx: 1, rangeleft: 130, rangeright: 400 },
+];
 
-const keys = { left: false, right: false, up: false };
+const keys = { left: false, right: false, up: false, down: false, zero: false };
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "ArrowLeft") keys.left = true;
   if (e.code === "ArrowRight") keys.right = true;
-  if (e.code === "Space" || e.code === "ArrowUp") keys.up = true;
+  if (e.code === "ArrowUp") keys.up = true;
+  if (e.code === "ArrowDown") keys.down = true;
+  if (e.code === "Digit0") { // ← TASTE 0 für Flugmodus!
+    flightMode = !flightMode;
+    player.vy = 0; // Vertikale Geschwindigkeit zurücksetzen
+  }
 });
 
 document.addEventListener("keyup", (e) => {
   if (e.code === "ArrowLeft") keys.left = false;
   if (e.code === "ArrowRight") keys.right = false;
-  if (e.code === "Space" || e.code === "ArrowUp") keys.up = false;
+  if (e.code === "ArrowUp") keys.up = false;
+  if (e.code === "ArrowDown") keys.down = false;
 });
 
 function showRandomFact() {
@@ -87,41 +94,63 @@ function update() {
     if (coin.spawnTimer > 120) spawnCoin();
   }
 
-  player.vx = 0;
-  if (keys.left) player.vx = -player.speed;
-  if (keys.right) player.vx = player.speed;
-  if (keys.up && player.onGround) {
-    player.vy = player.jumpPower;
-    player.onGround = false;
+  // ← FLUGMODUS LOGIK NEU!
+  if (flightMode) {
+    // Flugmodus: Pfeiltasten = frei fliegen
+    player.vx = 0;
+    player.vy = 0;
+    if (keys.left) player.vx = -player.speed * 1.5;
+    if (keys.right) player.vx = player.speed * 1.5;
+    if (keys.up) player.vy = -player.speed * 1.5;
+    if (keys.down) player.vy = player.speed * 1.5;
+    
+    player.onGround = false; // Keine Gravitation im Flugmodus
+  } else {
+    // Normalmodus: Laufen + Springen
+    player.vx = 0;
+    if (keys.left) player.vx = -player.speed;
+    if (keys.right) player.vx = player.speed;
+    if (keys.up && player.onGround) {
+      player.vy = player.jumpPower;
+      player.onGround = false;
+    }
+    
+    // Schwerkraft nur im Normalmodus
+    player.vy += 0.5;
   }
 
-  player.vy += 0.5;
   player.x += player.vx;
   player.y += player.vy;
-  player.onGround = false;
+  
+  if (!flightMode) player.onGround = false;
 
-  if (player.y + player.height >= groundY) {
+  // Boden-Kollision (nur Normalmodus)
+  if (!flightMode && player.y + player.height >= groundY) {
     player.y = groundY - player.height;
     player.vy = 0;
     player.onGround = true;
   }
 
-  platforms.forEach(p => {
-    const playerBottom = player.y + player.height;
-    const playerOldBottom = playerBottom - player.vy;
-    const isAbove = playerOldBottom <= p.y;
-    const isFalling = player.vy >= 0;
-    const withinX = player.x + player.width > p.x && player.x < p.x + p.width;
+  // Plattform-Kollision (nur Normalmodus)
+  if (!flightMode) {
+    platforms.forEach(p => {
+      const playerBottom = player.y + player.height;
+      const playerOldBottom = playerBottom - player.vy;
+      const isAbove = playerOldBottom <= p.y;
+      const isFalling = player.vy >= 0;
+      const withinX = player.x + player.width > p.x && player.x < p.x + p.width;
 
-    if (isAbove && isFalling && withinX && 
-        playerBottom >= p.y && playerBottom <= p.y + p.height) {
-      player.y = p.y - player.height;
-      player.vy = 0;
-      player.onGround = true;
-      player.x += p.vx;
-    }
-  });
+      if (isAbove && isFalling && withinX && 
+          playerBottom >= p.y && playerBottom <= p.y + p.height) {
+        player.y = p.y - player.height;
+        player.vy = 0;
+        player.onGround = true;
+        player.x += p.vx;
+      }
+    });
+  }
 
+  // Münze einsammeln
   if (!coin.collected &&
       player.x < coin.x + coin.width &&
       player.x + player.width > coin.x &&
@@ -133,8 +162,11 @@ function update() {
     showRandomFact();
   }
 
+  // Bildschirmbegrenzung
   if (player.x < 0) player.x = 0;
   if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+  if (player.y < 0) player.y = 0;
+  if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
 
   if (factActive) {
     factTimer--;
@@ -146,9 +178,11 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBackground();
 
+  // Schnee-Boden
   ctx.fillStyle = "#E8F4FD";
   ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
 
+  // Plattformen
   ctx.fillStyle = "#D2B48C";
   platforms.forEach(p => {
     ctx.fillRect(p.x, p.y, p.width, p.height);
@@ -160,6 +194,7 @@ function draw() {
     ctx.stroke();
   });
 
+  // Münze
   if (!coin.collected) {
     ctx.fillStyle = "#FFD700";
     ctx.beginPath();
@@ -173,13 +208,22 @@ function draw() {
     ctx.stroke();
   }
 
+  // Spieler (mit Flugmodus-Anzeige)
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.width, player.height);
   ctx.fillStyle = "#FFC301";
   ctx.fillRect(player.x + 8, player.y + 4, 6, 16);
   ctx.fillRect(player.x + 2, player.y + 10, 18, 4);
+  
+  // FLUGMODUS-INDIKATOR (roter Stern oben links)
+  if (flightMode) {
+    ctx.fillStyle = "#FF0000";
+    ctx.font = "bold 24px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText("✈️ FLIEGEN!", 20, canvas.height - 30);
+  }
 
-  // UI: Punkte + Fun Fact (OBEN RECHTS)
+  // UI: Punkte + Fun Fact
   ctx.fillStyle = "rgba(0, 91, 174, 0.9)";
   ctx.fillRect(10, 5, canvas.width - 20, 70);
 
@@ -187,7 +231,6 @@ function draw() {
   ctx.font = "bold 24px Arial";
   ctx.textAlign = "left";
   ctx.fillText("Punkte: " + score, 25, 30);
-
   ctx.font = "bold 32px Arial";
   ctx.fillText(score, 25, 55);
 

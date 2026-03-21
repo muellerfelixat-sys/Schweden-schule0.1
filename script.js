@@ -277,12 +277,31 @@ function draw() {
   }
 
   // MOBILE TOUCH BUTTONS (sichtbar machen)
-  ctx.fillStyle = "rgba(255,255,255,0.2)";
+  /*ctx.fillStyle = "rgba(255,255,255,0.2)";
   ctx.fillRect(20, canvas.height - 140, 80, 120); // Links
   ctx.fillRect(canvas.width - 100, canvas.height - 140, 80, 120); // Rechts
   ctx.fillRect(canvas.width/2 - 60, canvas.height - 280, 120, 80); // Hoch
   ctx.fillRect(canvas.width/2 - 60, canvas.height - 140, 120, 80); // Runter
 
+  ctx.textAlign = "left";
+
+  */
+  // MOBILE BUTTONS RECHTS UNTEN! 👇
+  ctx.fillStyle = "rgba(0, 91, 174, 0.8)";
+  ctx.fillRect(canvas.width - 180, canvas.height - 200, 80, 80);  // ←
+  ctx.fillRect(canvas.width - 90,  canvas.height - 200, 80, 80);  // →
+  
+  ctx.fillStyle = "rgba(255, 195, 1, 0.8)";
+  ctx.fillRect(canvas.width - 135, canvas.height - 110, 80, 80);  // ↑
+  
+  ctx.fillStyle = "white";
+  ctx.font = "bold 30px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("◀", canvas.width - 140, canvas.height - 160);
+  ctx.fillText("▶", canvas.width - 50,  canvas.height - 160);
+  ctx.fillText("▲", canvas.width - 95,  canvas.height - 70);
+  
   ctx.textAlign = "left";
 }
 

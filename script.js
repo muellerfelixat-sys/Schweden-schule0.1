@@ -27,6 +27,7 @@ let platforms = [
   { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
   { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
   { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 },
+  { x: 100, y: 150, width: 110, height: 20, vx: 1, rangeLeft: 130, rangeRight: 300 },
   ];
 
 const keys = { left: false, right: false, up: false };

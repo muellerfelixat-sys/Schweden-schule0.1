@@ -122,7 +122,7 @@ function update() {
   player.x += player.vx;
   player.y += player.vy;
   
-  if (!flightMode) player.onGround = true;
+  if (!flightMode) player.onGround = false;
 
   // Boden-Kollision (nur Normalmod us)
   if (!flightMode && player.y + player.height >= groundY) {

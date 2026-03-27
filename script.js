@@ -220,7 +220,7 @@ function draw() {
     ctx.fillStyle = "#FF0000";
     ctx.font = "bold 24px Arial";
     ctx.textAlign = "left";
-    ctx.fillText("✈️ FLIEGEN!", 20, canvas.height - 30);
+    
   }
 
   // UI: Punkte + Fun Fact

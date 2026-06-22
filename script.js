@@ -54,7 +54,7 @@ document.addEventListener("keyup", (e) => {
 function showRandomFact() {
   funFact = swedenFacts[Math.floor(Math.random() * swedenFacts.length)];
   factActive = true;
-  factTimer = 180;
+  factTimer = 500;
 }
 
 function spawnCoin() {

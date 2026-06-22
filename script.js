@@ -88,7 +88,24 @@ function update() {
     p.x += p.vx;
     if (p.x < p.rangeLeft || p.x + p.width > p.rangeRight) p.vx *= -1;
   });
+const leftBtn = document.getElementById("leftBtn");
+const jumpBtn = document.getElementById("jumpBtn");
+const rightBtn = document.getElementById("rightBtn");
 
+leftBtn.addEventListener("click", () => {
+  player.x -= 10;
+  console.log("Links");
+});
+
+jumpBtn.addEventListener("click", () => {
+  player.jump();
+  console.log("Jump");
+});
+
+rightBtn.addEventListener("click", () => {
+  player.x += 10;
+  console.log("Rechts");
+});
   if (coin.collected) {
     coin.spawnTimer++;
     if (coin.spawnTimer > 120) spawnCoin();

@@ -11,3 +11,32 @@ canvas {
   background-color: #333;
   border: 2px solid #fff;
 }
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+#gameCanvas {
+  background: #cfefff;
+  display: block;
+}
+
+.controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.controls button {
+  padding: 16px 24px;
+  font-size: 20px;
+  border: none;
+  border-radius: 12px;
+  background: #222;
+  color: white;
+}

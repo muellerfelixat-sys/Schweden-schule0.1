@@ -164,42 +164,8 @@ rightBtn.addEventListener("click", () => {
         player.onGround = true;
         player.x += p.vx;
       }
-    });
-  }
-document.addEventListener("DOMContentLoaded", () => {
-  const leftBtn = document.getElementById("leftBtn");
-  const jumpBtn = document.getElementById("jumpBtn");
-  const rightBtn = document.getElementById("rightBtn");
+    });  
 
-  const player = {
-    x: 100,
-    y: 300,
-    vy: 0,
-    width: 40,
-    height: 40,
-    speed: 10,
-    jumpPower: 15,
-    onGround: true
-  };
-
-  leftBtn.addEventListener("click", () => {
-    player.x -= player.speed;
-    console.log("Links");
-  });
-
-  rightBtn.addEventListener("click", () => {
-    player.x += player.speed;
-    console.log("Rechts");
-  });
-
-  jumpBtn.addEventListener("click", () => {
-    if (player.onGround) {
-      player.vy = -player.jumpPower;
-      player.onGround = false;
-      console.log("Jump");
-    }
-  });
-});
   // Münze einsammeln
   if (!coin.collected &&
       player.x < coin.x + coin.width &&
@@ -302,3 +268,4 @@ function gameLoop() {
 
 spawnCoin();
 gameLoop();
+}

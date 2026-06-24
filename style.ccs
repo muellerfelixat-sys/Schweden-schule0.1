@@ -16,5 +16,3 @@ body {
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
-
-#gameCanvas 

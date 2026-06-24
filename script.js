@@ -14,7 +14,7 @@ const swedenFacts = [
   "⚽ Vize-Weltmeister 1958",
   "👑 250.000 Jäger in Schweden"
 ];
-
+ 
 const player = {
   x: 50, y: 300, width: 40, height: 40,
   color: "#005BAE", vx: 0, vy: 0,

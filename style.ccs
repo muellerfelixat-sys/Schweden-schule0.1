@@ -1,18 +1,22 @@
-body {
+html, body {
   margin: 0;
-  background-color: #222;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #87CEEB;
+}
+
+body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
 canvas {
-  background-color: #333;
-  border: 2px solid #fff;
-}
-body {
-  margin: 0;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
+  display: block;
+  background: #87CEEB;
+  border: 4px solid #005BAE;
+  max-width: 100vw;
+  max-height: 100vh;
 }

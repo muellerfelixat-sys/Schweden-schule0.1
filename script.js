@@ -14,21 +14,20 @@ const swedenFacts = [
   "⚽ Vize-Weltmeister 1958",
   "👑 250.000 Jäger in Schweden"
 ];
- 
+
 const player = {
   x: 50, y: 300, width: 40, height: 40,
   color: "#005BAE", vx: 0, vy: 0,
-  speed: 2, jumpPower: -12, onGround: false
+  speed: 2, jumpPower: -10, onGround: false
 };
 
 const groundY = 350;
 const coin = { x: 0, y: 0, width: 25, height: 25, collected: false, spawnTimer: 0 };
 
 let platforms = [
-  { x: 100, y: 280, width: 120, height: 20, vx: 1, rangeLeft: 80, rangeRight: 300 },
-  { x: 400, y: 230, width: 120, height: 20, vx: -1, rangeLeft: 350, rangeRight: 650 },
-  { x: 200, y: 180, width: 100, height: 20, vx: 1, rangeLeft: 150, rangeRight: 500 },
-  { x: 300, y: 150, width: 100, height: 20, vx: 1, rangeleft: 130, rangeRight: 400 },
+  { x: 100, y: 280, width: 120, height: 20, vx: 2, rangeLeft: 80, rangeRight: 300 },
+  { x: 400, y: 230, width: 120, height: 20, vx: -2, rangeLeft: 350, rangeRight: 650 },
+  { x: 200, y: 180, width: 100, height: 20, vx: 1.5, rangeLeft: 150, rangeRight: 500 }
 ];
 
 const keys = { left: false, right: false, up: false, down: false, zero: false };
@@ -54,7 +53,7 @@ document.addEventListener("keyup", (e) => {
 function showRandomFact() {
   funFact = swedenFacts[Math.floor(Math.random() * swedenFacts.length)];
   factActive = true;
-  factTimer = 500;
+  factTimer = 180;
 }
 
 function spawnCoin() {
@@ -88,24 +87,7 @@ function update() {
     p.x += p.vx;
     if (p.x < p.rangeLeft || p.x + p.width > p.rangeRight) p.vx *= -1;
   });
-const leftBtn = document.getElementById("leftBtn");
-const jumpBtn = document.getElementById("jumpBtn");
-const rightBtn = document.getElementById("rightBtn");
 
-leftBtn.addEventListener("click", () => {
-  player.x -= 10;
-  console.log("Links");
-});
-
-jumpBtn.addEventListener("click", () => {
-  player.jump();
-  console.log("Jump");
-});
-
-rightBtn.addEventListener("click", () => {
-  player.x += 10;
-  console.log("Rechts");
-});
   if (coin.collected) {
     coin.spawnTimer++;
     if (coin.spawnTimer > 120) spawnCoin();
@@ -141,7 +123,7 @@ rightBtn.addEventListener("click", () => {
   
   if (!flightMode) player.onGround = false;
 
-  // Boden-Kollision (nur Normalmod us)
+  // Boden-Kollision (nur Normalmodus)
   if (!flightMode && player.y + player.height >= groundY) {
     player.y = groundY - player.height;
     player.vy = 0;
@@ -164,7 +146,8 @@ rightBtn.addEventListener("click", () => {
         player.onGround = true;
         player.x += p.vx;
       }
-    });  
+    });
+  }
 
   // Münze einsammeln
   if (!coin.collected &&
@@ -236,7 +219,7 @@ function draw() {
     ctx.fillStyle = "#FF0000";
     ctx.font = "bold 24px Arial";
     ctx.textAlign = "left";
-    
+    ctx.fillText("✈️ FLIEGEN!", 20, canvas.height - 30);
   }
 
   // UI: Punkte + Fun Fact
@@ -268,4 +251,3 @@ function gameLoop() {
 
 spawnCoin();
 gameLoop();
-}

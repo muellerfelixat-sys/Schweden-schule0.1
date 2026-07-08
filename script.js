@@ -18,7 +18,7 @@ const swedenFacts = [
 const player = {
   x: 50, y: 300, width: 40, height: 40,
   color: "#005BAE", vx: 0, vy: 0,
-  speed: 5, jumpPower: -10, onGround: false
+  speed: 7, jumpPower: -12, onGround: false
 };
 
 const groundY = 350;
@@ -26,8 +26,8 @@ const coin = { x: 0, y: 0, width: 25, height: 25, collected: false, spawnTimer: 
 
 let platforms = [
   { x: 100, y: 280, width: 120, height: 20, vx: 2, rangeLeft: 80, rangeRight: 300 },
-  { x: 400, y: 230, width: 120, height: 20, vx: -2, rangeLeft: 350, rangeRight: 650 },
-  { x: 200, y: 180, width: 100, height: 20, vx: 1.5, rangeLeft: 150, rangeRight: 500 }
+  { x: 400, y: 230, width: 120, height: 15, vx: -2, rangeLeft: 350, rangeRight: 650 },
+  { x: 200, y: 180, width: 100, height: 10, vx: 1.5, rangeLeft: 150, rangeRight: 500 }
 ];
 
 const keys = { left: false, right: false, up: false, down: false, zero: false };

@@ -12,7 +12,9 @@ const swedenFacts = [
   "🐻 300.000 Elche leben in Schweden",
   "🏅 39 Nobelpreisträger aus Schweden",
   "⚽ Vize-Weltmeister 1958",
-  "👑 250.000 Jäger in Schweden"
+  "👑 250.000 Jäger in Schweden",
+  " Das Land heißt offiziell das Königreich Schweden",
+  " Das beliebte Möbelhaus IKEA kommt aus Schweden"
 ];
 
 const player = {

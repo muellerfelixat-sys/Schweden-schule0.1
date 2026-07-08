@@ -18,7 +18,7 @@ const swedenFacts = [
 const player = {
   x: 50, y: 300, width: 40, height: 40,
   color: "#005BAE", vx: 0, vy: 0,
-  speed: 5, jumpPower: 10, onGround: false
+  speed: 5, jumpPower: -25, onGround: false
 };
 
 const groundY = 350;

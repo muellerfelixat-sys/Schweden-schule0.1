@@ -214,13 +214,7 @@ function draw() {
   ctx.fillRect(player.x + 8, player.y + 4, 6, 16);
   ctx.fillRect(player.x + 2, player.y + 10, 18, 4);
   
-  // FLUGMODUS-INDIKATOR (roter Stern oben links)
-  if (flightMode) {
-    ctx.fillStyle = "#FF0000";
-    ctx.font = "bold 24px Arial";
-    ctx.textAlign = "left";
-    ctx.fillText("✈️ FLIEGEN!", 20, canvas.height - 30);
-  }
+  
 
   // UI: Punkte + Fun Fact
   ctx.fillStyle = "rgba(0, 91, 174, 0.9)";
